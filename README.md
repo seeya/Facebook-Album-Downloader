@@ -11,3 +11,8 @@ Downloading Album
 - If the album is private enter your details in the prompt
 - python download_album.py
 
+
+Making an Exe
+- Tested with pyinstaller, runnable with an exe.
+- pyinstaller --onefile download_album.py
+- Just make sure chromedriver is in the same directory when you run the exe
