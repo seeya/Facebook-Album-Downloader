@@ -42,7 +42,9 @@ if __name__ == "__main__":
 
         extensions = webdriver.ChromeOptions()
         # hide images
-        prefs = {"profile.managed_default_content_settings.images": 2}
+        prefs = {"profile.managed_default_content_settings.images": 2,
+                "profile.default_content_setting_values.notifications": 2}
+
         extensions.add_experimental_option("prefs", prefs)
 
         privateAlbum = raw_input("Private Album? (y/n)")
@@ -97,7 +99,7 @@ if __name__ == "__main__":
 
 
             previousHeight = currentHeight
-            time.sleep(0.3)
+            time.sleep(0.6)
 
 
         linkImages = browser.execute_script("var list = []; Array.prototype.forEach.call(document.querySelectorAll('.uiMediaThumb[ajaxify]:not(.coverWrap)'), function(el) { var src = el.getAttribute('ajaxify'); var key = 'src='; src = src.substr(src.indexOf(key) + key.length); src = unescape(src.substr(0, src.indexOf('&'))); list.push(src) }); return list;")
