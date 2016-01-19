@@ -27,8 +27,7 @@ class DownloadWorker(Thread):
     def run(self):
         while True:
             link = self.queue.get()
-            fileName = link[::-1].split("/")[0][::-1].split("?")[0]
-            urllib.urlretrieve(link, albumName + "/" + fileName)
+            urllib.urlretrieve('https://www.facebook.com/photo/download/?fbid=' + link, albumName + "/" + link + '.jpg')
             self.queue.task_done()
 
 if __name__ == "__main__":
@@ -37,7 +36,7 @@ if __name__ == "__main__":
         print "[Download: http://chromedriver.storage.googleapis.com/index.html?path=2.20/ ]"
         raw_input("Press any key to exit...")
     else: 
-        print "[Facebook Album Downloader v1]"
+        print "[Facebook Album Downloader v1.1]"
         start = timeit.default_timer()
 
         extensions = webdriver.ChromeOptions()
@@ -97,12 +96,11 @@ if __name__ == "__main__":
             if previousHeight == currentHeight:
                 reachedEnd = None
 
-
             previousHeight = currentHeight
             time.sleep(0.6)
 
 
-        linkImages = browser.execute_script("var list = []; Array.prototype.forEach.call(document.querySelectorAll('.uiMediaThumb[ajaxify]:not(.coverWrap)'), function(el) { var src = el.getAttribute('ajaxify'); var key = 'src='; src = src.substr(src.indexOf(key) + key.length); src = unescape(src.substr(0, src.indexOf('&'))); list.push(src) }); return list;")
+        linkImages = browser.execute_script("var list = []; Array.prototype.forEach.call(document.querySelectorAll('.uiMediaThumbImg'), function(el) { var src = el.getAttribute('style').split('_')[1].split('_')[0]; list.push(src) }); return list;")
         totalImages = len(linkImages)
 
         print "[Found: " + str(len(linkImages)) + "]"
