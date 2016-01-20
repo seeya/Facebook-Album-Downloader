@@ -2,15 +2,17 @@ import os
 import sys
 import time
 import timeit
-import urllib
+import requests
+from PIL import Image
 from Queue import Queue
 from threading import Thread
+from StringIO import StringIO
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
-
+cookies = {}
 baseURL = "http://facebook.com/"
 username = ""
 password = ""
@@ -27,7 +29,9 @@ class DownloadWorker(Thread):
     def run(self):
         while True:
             link = self.queue.get()
-            urllib.urlretrieve('https://www.facebook.com/photo/download/?fbid=' + link, albumName + "/" + link + '.jpg')
+            r = requests.get('https://www.facebook.com/photo/download/?fbid=' + link,cookies=cookies)
+            i = Image.open(StringIO(r.content))
+            i.save(albumName + "/" + link + '.jpg')      
             self.queue.task_done()
 
 if __name__ == "__main__":
@@ -65,6 +69,10 @@ if __name__ == "__main__":
             browser.find_element_by_id("email").send_keys(username)
             browser.find_element_by_id("pass").send_keys(password)
             browser.find_element_by_id("loginbutton").click()
+            all_cookies = browser.get_cookies()
+
+            for s_cookie in all_cookies:
+                cookies[s_cookie["name"]]=s_cookie["value"]
 
         print "[Loading Album]"
         browser.get(albumLink)
@@ -100,7 +108,7 @@ if __name__ == "__main__":
             time.sleep(0.6)
 
 
-        linkImages = browser.execute_script("var list = []; Array.prototype.forEach.call(document.querySelectorAll('.uiMediaThumbImg'), function(el) { var src = el.getAttribute('style').split('_')[1].split('_')[0]; list.push(src) }); return list;")
+        linkImages = browser.execute_script("list = []; Array.prototype.forEach.call(document.querySelectorAll('.uiMediaThumb'), function(el) { var src = el.getAttribute('id'); if(src && src.indexOf('pic_') > -1) list.push(src.split('_')[1]); }); return list;")
         totalImages = len(linkImages)
 
         print "[Found: " + str(len(linkImages)) + "]"
@@ -108,10 +116,10 @@ if __name__ == "__main__":
         for fullRes in linkImages:
             queue.put(fullRes)
 
+        browser.quit()
+
         print "[Downloading...]"
         queue.join()
-
-        browser.quit()
 
         stop = timeit.default_timer()
         print "[Time taken: %ss]" % str(stop - start)
