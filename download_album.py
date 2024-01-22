@@ -8,18 +8,16 @@ from six.moves.queue import Queue
 from threading import Thread
 from io import StringIO
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.keys import Keys
 from six.moves import range
 from six.moves import input
-
+from pathlib import Path
+Dir = Path(__file__).parent
 cookies = {}
 baseURL = "http://facebook.com/"
 username = ""
 password = ""
 albumLink = ""
-albumName = ""
+albumName = "u"
 albumUser = ""
 max_workers = 8
 
@@ -34,13 +32,13 @@ class DownloadWorker(Thread):
             link = self.queue.get()
             r = requests.get('https://www.facebook.com/photo/download/?fbid=' + link, cookies=cookies)
             i = Image.open(StringIO(r.content))
-            i.save(albumName + "/" + link + '.jpg')
+            i.save(Dir + albumName / link + '.jpg')
             self.queue.task_done()
 
 
 if __name__ == "__main__":
-    if not os.path.exists(os.path.dirname(sys.argv[0]) + '/chromedriver.exe'):
-        print(os.path.dirname(sys.argv[0]))
+    if not os.path.exists(Dir / 'chromedriver.exe'):
+        print(Dir / 'chromedriver.exe')
         print("[chromedriver.exe not found in directory! It must be in this folder and named chromedriver.exe]")
         print("[Download: http://chromedriver.storage.googleapis.com/index.html?path=2.20/ ]")
         input("Press any key to exit...")
@@ -57,15 +55,17 @@ if __name__ == "__main__":
 
         extensions.add_experimental_option("prefs", prefs)
 
-        privateAlbum = input("Private Album? (y/n)")
+        privateAlbum = 'n'
+        # privateAlbum = input("Private Album? (y/n)")
 
-        if privateAlbum == 'y':
-            username = input("Email: ")
-            password = input("Password: ")
+        # if privateAlbum == 'y':
+        #     username = input("Email: ")
+        #     password = input("Password: ")
 
-        albumLink = input("Album Link: ")
+        # albumLink = input("Album Link: ")
 
-        browser = webdriver.Chrome(executable_path="chromedriver", options=extensions)
+        # browser = webdriver.Chrome(executable_path="chromedriver", options=extensions)
+        browser = webdriver.Chrome(options=extensions)
         browser.implicitly_wait(7)
 
         if privateAlbum == 'y':
