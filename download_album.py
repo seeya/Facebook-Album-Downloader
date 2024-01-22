@@ -16,7 +16,7 @@ cookies = {}
 baseURL = "http://facebook.com/"
 username = ""
 password = ""
-albumLink = ""
+albumLink = "https://www.facebook.com/aalaaragabdesigns/posts/510169624089508"
 albumName = "u"
 albumUser = ""
 max_workers = 8
@@ -32,12 +32,12 @@ class DownloadWorker(Thread):
             link = self.queue.get()
             r = requests.get('https://www.facebook.com/photo/download/?fbid=' + link, cookies=cookies)
             i = Image.open(StringIO(r.content))
-            i.save(Dir + albumName / link + '.jpg')
+            i.save(Dir / albumName / (link + '.jpg'))
             self.queue.task_done()
 
 
 if __name__ == "__main__":
-    if not os.path.exists(Dir / 'chromedriver.exe'):
+    if not (Dir / 'chromedriver.exe').exists():
         print(Dir / 'chromedriver.exe')
         print("[chromedriver.exe not found in directory! It must be in this folder and named chromedriver.exe]")
         print("[Download: http://chromedriver.storage.googleapis.com/index.html?path=2.20/ ]")
@@ -88,8 +88,8 @@ if __name__ == "__main__":
         albumName = browser.find_element_by_class_name("fbPhotoAlbumTitle").text
 
         # create album path
-        if not os.path.exists(albumName):
-            os.makedirs(albumName)
+        if not (Dir / albumName).exists():
+            (Dir / albumName).mkdir(parents=True, exist_ok=True)
 
         queue = Queue()
 
