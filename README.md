@@ -2,7 +2,7 @@ Facebook Album Downloader (Windows only)
 ======
 
 ## Dependencies
-1. Uses [Python 2.7](https://www.python.org/download/releases/2.7/)
+1. Uses [Python 3](https://www.python.org/download/releases/3/)
 2. Uses `selenium chromedriver` - included in the repository
 3. More information [here](https://sites.google.com/a/chromium.org/chromedriver/getting-started)
 4. [Google Chrome](https://www.google.com/chrome/browser/desktop/) must be installed on your computer
