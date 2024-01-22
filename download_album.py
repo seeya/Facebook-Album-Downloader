@@ -8,9 +8,11 @@ from six.moves.queue import Queue
 from threading import Thread
 from io import StringIO
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from six.moves import range
 from six.moves import input
 from pathlib import Path
+
 Dir = Path(__file__).parent
 cookies = {}
 baseURL = "http://facebook.com/"
@@ -64,8 +66,9 @@ if __name__ == "__main__":
 
         # albumLink = input("Album Link: ")
 
-        # browser = webdriver.Chrome(executable_path="chromedriver", options=extensions)
-        browser = webdriver.Chrome(options=extensions)
+        service = Service(executable_path='./chromedriver.exe')
+        browser = webdriver.Chrome(service=service, options=extensions)
+        # browser = webdriver.Chrome(options=extensions)
         browser.implicitly_wait(7)
 
         if privateAlbum == 'y':
